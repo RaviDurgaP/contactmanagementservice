@@ -1,0 +1,248 @@
+openapi: 3.0.0
+info:
+  title: CONTACT MANAGEMENT
+  description: CONTACT DETAILS
+  version: 1.0.0
+
+paths:
+  /GetAllContacts:
+    get:
+      summary: Get a list of contacts
+      tags:
+        - contact
+      parameters:
+        - $ref: "#/components/parameters/idParam1"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/directionParam"
+        - $ref: "#/components/parameters/sortByFieldParam"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactDetails"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/ResourceNotFoundError"
+
+
+  /GetContact:
+    get:
+      summary: Get a contact by Id
+      tags:
+        - contact
+      parameters:
+        - $ref: "#/components/parameters/idParam"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactDto"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/ResourceNotFoundError"
+        "422":
+          $ref: "#/components/responses/UnAcceptableInputs"
+
+  /Contactdetails:
+    post:
+      summary: Create a new contact
+      tags:
+        - contact
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactDto"
+        required: true
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactDto"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/ResourceNotFoundError"
+        "422":
+          $ref: "#/components/responses/UnAcceptableInputs"
+
+  /Updatecontact:
+    put:
+      summary: Update a contact by Id
+      tags:
+        - contact
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactDto"
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactDto"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/ResourceNotFoundError"
+        "422":
+          $ref: "#/components/responses/UnAcceptableInputs"
+
+  /Deletecontact:
+    delete:
+      summary: Delete particular  contact
+      tags:
+        - contact
+      parameters:
+        - $ref: "#/components/parameters/idParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/ResourceNotFoundError"
+        "422":
+          $ref: "#/components/responses/UnAcceptableInputs"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  parameters:
+
+    idParam:
+      name: id
+      in: query
+      required: true
+      schema:
+        type: string
+    idParam1:
+      name: numbertype
+      in: query
+      required: true
+      schema:
+        type: string
+    limitParam:
+      name: Limit
+      in: query
+      required: false
+      schema:
+        type: integer
+    directionParam:
+      name: Direction
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        default: asc
+    sortByFieldParam:
+      name: SortByField
+      in: query
+      required: false
+      schema:
+        type: string
+        nullable: true
+  responses:
+    Success:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+              contactname:
+                type: string
+              message:
+                type: string
+           
+    ResourceNotFoundError:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MessageDto"
+    UnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MessageDto"
+    UnAcceptableInputs:
+      description: Invalid Inputs
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MessageDto"
+  schemas:
+    MessageDto:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+    ContactDetails:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContactDto"
+    ContactDto:
+      type: object
+      properties:
+        id: 
+          type: string
+        contactname:
+          type: string
+        numbertype:
+          type: string
+        number:
+          type: string
+        isExist:
+          type: boolean
+      required:
+        - contactname
+        - number
+
+    # StudentUpdateDto:
+    #   type: object
+    #   properties:
+    #     id: 
+    #       type: string
+    #     createdAt:
+    #       type: string
+    #       format: timestamp                                                
+    #     contactname:
+    #       type: string
+    #      numbertype:
+    #        type: string
+    #     
+    #     number:
+    #       type: string
+    #     isExist:
+    #       type: boolean
+    #   required:
+    #     - contactname
+    #     - number
+
